@@ -10,10 +10,10 @@ module.exports = function (grunt) {
     'use strict';
 
     grunt.loadTasks('tasks');
-    
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks("grunt-contrib-clean");
-    
+
     // Project configuration.
     grunt.initConfig({
         jshint: {
@@ -23,17 +23,12 @@ module.exports = function (grunt) {
             ],
         },
 
-        // Before generating any new files, remove any previously-created files.
-        clean: {
-            tests: ['tmp']
-        },
-
         // Configuration to be run (and then tested).
         scratchblock: {
             generate: {
                 options: {},
                 files: [
-                    {expand: true, src: 'test/*.html', dest: "test/"}
+                    {expand: true, src: ['test/*.html'], dest: "", ext: ".parsed.html", exclude: "test/*.parsed.html"}
                 ]
             }
         }
@@ -41,7 +36,7 @@ module.exports = function (grunt) {
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('test', ["clean", "scratchblock"]);
+    grunt.registerTask('test', ["scratchblock"]);
 
     // By default, lint and run all tests.
     grunt.registerTask('default', ['jshint', 'test']);
