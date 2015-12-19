@@ -575,6 +575,7 @@ var scratchblocks2 = function ($) {
         var iso_code = language.code;
         delete language.code;
 
+		var minispec;
         // convert blocks list to a dict.
         var block_spec_by_id = {};
         for (var i=0; i<language.blocks.length; i++) {
@@ -584,7 +585,7 @@ var scratchblocks2 = function ($) {
             block_spec_by_id[blockid] = spec;
 
             // Add block to the text lookup dict.
-            var minispec = minify(normalize_spec(spec));
+            minispec = minify(normalize_spec(spec));
             if (minispec) block_by_text[minispec] = {
                 blockid: blockid,
                 lang: iso_code,
@@ -597,7 +598,7 @@ var scratchblocks2 = function ($) {
             strings.aliases[text] = language.aliases[text];
 
             // Add alias to the text lookup dict.
-            var minispec = minify(normalize_spec(text));
+            minispec = minify(normalize_spec(text));
             block_by_text[minispec] = {
                 blockid: language.aliases[text],
                 lang: iso_code,
@@ -607,7 +608,7 @@ var scratchblocks2 = function ($) {
         // add stuff to strings
         for (var key in strings) {
             if (strings[key].constructor === Array) {
-                for (i=0; i<language[key].length; i++) {
+                for (var i=0; i<language[key].length; i++) {
                     if (language[key][i]) {
                         strings[key].push(minify(language[key][i]));
                     }
@@ -628,7 +629,7 @@ var scratchblocks2 = function ($) {
         sb2.strings = strings = clone(_init_strings);
         sb2.languages = languages = clone(_init_languages);
         block_by_text = clone(_init_block_by_text);
-    }
+    };
 
     // Hacks for certain blocks.
 
@@ -640,14 +641,14 @@ var scratchblocks2 = function ($) {
         if (func == "10^") func = "10 ^";
         info.category = ($.inArray(func, strings.math) > -1) ? "operators"
                                                              : "sensing";
-    }
+    };
 
     block_info_by_id["length of _"].hack = function (info, args) {
         // List block if dropdown, otherwise operators
         if (!args.length) return;
         info.category = (/^\[.* v\]$/.test(args[0])) ? "list"
                                                      : "operators";
-    }
+    };
 
     block_info_by_id["stop _"].hack = function (info, args) {
         // Cap block unless argument is "other scripts in sprite"
@@ -655,7 +656,7 @@ var scratchblocks2 = function ($) {
         var what = minify(strip_brackets(args[0]).replace(/ v$/, ""));
         info.shape = ($.inArray(what, strings.osis) > -1) ? null
                                                           : "cap";
-    }
+    };
 
     // Define function for getting block info by text.
 
@@ -682,11 +683,11 @@ var scratchblocks2 = function ($) {
     // Utility function that deep clones dictionaries/lists.
 
     function clone(val) {
-        if (val == null) return val;
+        if (val === null) return val;
         if (val.constructor == Array) {
             return val.map(clone);
         } else if (typeof val == "object") {
-            var result = {}
+            var result = {};
             for (var key in val) {
                 result[clone(key)] = clone(val[key]);
             }
@@ -834,7 +835,7 @@ var scratchblocks2 = function ($) {
         var pieces = split_into_pieces(code);
 
         // define hat?
-        for (var i=0; i<strings.define.length; i++) {;;
+        for (var i=0; i<strings.define.length; i++) {
             var define_text = strings.define[i];
             if (code.toLowerCase() === define_text || (pieces[0] &&
                     pieces[0].toLowerCase().startsWith(define_text+" "))) {
@@ -1077,7 +1078,7 @@ var scratchblocks2 = function ($) {
         switch (bracket) {
             case "(": return "embedded";
             case "<": return "boolean";
-            case "{": default: return "stack";
+            default: return "stack";
         }
     }
 
@@ -1097,6 +1098,7 @@ var scratchblocks2 = function ($) {
                     // reporter (or embedded! TODO remove this comment)
                     return "reporter";
                 }
+				break;
             case "[":
                 if (/^#[a-f0-9]{3}([a-f0-9]{3})?$/i.test(code)) {
                     return "color";
@@ -1107,6 +1109,7 @@ var scratchblocks2 = function ($) {
                         return "string";
                     }
                 }
+				break;
             case "<":
                 return "boolean";
             default:
@@ -1231,14 +1234,16 @@ var scratchblocks2 = function ($) {
 
             var info = parse_line(lines[i], context);
 
-            if (!info.pieces.length && info.comment !== undefined
-                    && nesting.length <= 1) {
+            if (!info.pieces.length && info.comment !== undefined &&
+				nesting.length <= 1) {
                 // TODO multi-line comments
                 new_script();
                 current_script.push(info);
                 new_script();
                 continue;
             }
+
+			var cmouth, cwrap;
 
             switch (info.flag || info.shape) {
                 case "hat":
@@ -1253,7 +1258,7 @@ var scratchblocks2 = function ($) {
                     break;
 
                 case "cstart":
-                    var cwrap = {
+                    cwrap = {
                         type: "cwrap",
                         shape: info.shape,
                         contents: [info],
@@ -1261,7 +1266,7 @@ var scratchblocks2 = function ($) {
                     info.shape = "stack";
                     current_script.push(cwrap);
                     nesting.push(cwrap.contents);
-                    var cmouth = {type: "cmouth", contents: [],
+                    cmouth = {type: "cmouth", contents: [],
                                   category: info.category};
                     cwrap.contents.push(cmouth);
                     nesting.push(cmouth.contents);
@@ -1272,16 +1277,15 @@ var scratchblocks2 = function ($) {
                         current_script.push(info);
                         break;
                     }
-                    var cmouth = nesting.pop(); // old cmouth contents
-                    if (cmouth.length
-                            && cmouth[cmouth.length - 1].shape == "cap") {
+                    cmouth = nesting.pop(); // old cmouth contents
+                    if (cmouth.length && cmouth[cmouth.length - 1].shape == "cap") {
                         // last block is a cap block
                         info.flag += " capend";
                     }
-                    var cwrap = nesting[nesting.length - 1]; // cwrap contents
+                    cwrap = nesting[nesting.length - 1]; // cwrap contents
                     info.category = cwrap[0].category; // category of c block
                     cwrap.push(info);
-                    var cmouth = {type: "cmouth", contents: [],
+                    cmouth = {type: "cmouth", contents: [],
                                   category: cwrap[0].category};
                     cwrap.push(cmouth);
                     nesting.push(cmouth.contents);
@@ -1361,7 +1365,7 @@ var scratchblocks2 = function ($) {
         selector = selector || "pre.blocks";
         options = options || {
             inline: false,
-        }
+        };
 
         // find elements
         $(selector).each(function (i, el) {
@@ -1377,7 +1381,7 @@ var scratchblocks2 = function ($) {
                 code = code.replace('\n', '');
             }
 
-            var scripts = parse_scripts(code);
+            scripts = parse_scripts(code);
 
             $el.text("");
             $el.append($container);
@@ -1470,9 +1474,9 @@ var scratchblocks2 = function ($) {
             if (typeof piece === "object") {
                 $block.append(render_block(piece));
             } else if (piece === "@" && info.image_replacement) {
-                var $image = $("<span>")
+                var $image = $("<span>");
                 $image.addClass(info.image_replacement);
-                var $span = $("<span>")
+                var $span = $("<span>");
                 $span.text(image_text[info.image_replacement]);
                 $image.append($span);
                 $block.append($image);
