@@ -1,7 +1,7 @@
 {
   "name": "grunt-scratchblock",
   "description": "Compile scratch script into html using scratchblock2 server-side instead of client-side",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/etchcode/scratchblock",
   "author": {
     "name": "Daniel Franklin",
