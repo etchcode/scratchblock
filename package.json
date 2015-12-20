@@ -1,10 +1,10 @@
 {
   "name": "grunt-scratchblock",
-  "description": "Server-side version of scratchblock2",
-  "version": "0.1.0",
+  "description": "Compile scratch script into html using scratchblock2 server-side instead of client-side",
+  "version": "1.0.0",
   "homepage": "https://github.com/etchcode/scratchblock",
   "author": {
-    "name": "Daniel Franklin and Sam Schickler",
+    "name": "Daniel Franklin",
     "email": "danielf@openmailbox.org",
     "url": "danielzfranklin.org"
   },
@@ -18,7 +18,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/etchcode/scratchblock/blob/master/LICENSE-MIT"
+      "url": "https://github.com/etchcode/scratchblock/blob/master/LICENSE"
     }
   ],
   "engines": {
@@ -36,7 +36,10 @@
     "grunt": "~0.4.5"
   },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+	"scratch",
+	"scratcblock",
+	"scratchblock2"
   ],
   "dependencies": {
     "jsdom": "^7.2.1"
