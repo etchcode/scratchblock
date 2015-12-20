@@ -1,7 +1,8 @@
 # scratchblock
 NodeJS version of scratchblocks2 to compile scratch blocks into HTML server-side.
 Anything between `<scratch>` and `</scratch>` will be transformed into scratchblocks2 html code.
-You then need to load the [scratchblocks2 css file](https://github.com/tjvr/scratchblocks/blob/master/build/scratchblocks2.css).
+The inline attribute (`<scratch inline>`) will result in inline scratchblocks2 html code.
+You then need to load the [scratchblocks2 css file](https://github.com/tjvr/scratchblocks/blob/master/build/scratchblocks2.css) on the page that the html will be displayed on.
 
 For instance, a file with the contents of
 ```
