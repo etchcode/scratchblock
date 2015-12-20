@@ -25,11 +25,11 @@ To use, load it in your gruntfile and then specify files for it to run in like t
 
 ```
 scratchblock: {
-	generate: {
-		files: [
-			{expand: true, src: ['test/*.html'], dest: "", ext: ".parsed.html", exclude: "test/*.parsed.html"}
-		]
-	}
+    generate: {
+        files: [
+            {expand: true, src: ['test/*.html'], dest: "", ext: ".parsed.html", exclude: "test/*.parsed.html"}
+        ]
+    }
 }
 ```
 
